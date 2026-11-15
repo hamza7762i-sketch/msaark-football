@@ -1,8 +1,6 @@
 name: Build APK
-on:
-  push:
-    branches: [ main ]
-  workflow_dispatch:
+
+on: [push]
 
 jobs:
   build:
@@ -11,23 +9,17 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: 20
       - uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
           java-version: '17'
-      - name: Setup Android SDK
-        uses: android-actions/setup-android@v3
       - name: Install Capacitor
-        run: |
-          npm init -y
-          npm install @capacitor/core @capacitor/cli @capacitor/android
-          npx cap init "MSAARK FOOTBALL" com.msaark.football --web-dir=www
-          mkdir -p www
-          cp index.html www/index.html
-          npx cap add android
+        run: npm install @capacitor/core @capacitor/cli @capacitor/android
       - name: Build APK
         run: |
+          npx cap add android || true
+          npx cap sync
           cd android
           chmod +x gradlew
           ./gradlew assembleDebug
@@ -35,4 +27,3 @@ jobs:
         with:
           name: MSAARK-FOOTBALL-APK
           path: android/app/build/outputs/apk/debug/app-debug.apk
-          
