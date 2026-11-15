@@ -16,6 +16,18 @@ jobs:
           java-version: '17'
       - name: Install Capacitor
         run: npm install @capacitor/core @capacitor/cli @capacitor/android
+      - name: Prepare Web App
+        run: |
+          if [ ! -f capacitor.config.json ]; then
+            echo '{"appId":"com.msaark.football","appName":"MSAARK Football","webDir":"www"}' > capacitor.config.json
+          fi
+          mkdir -p www
+          if [ -f index.html ]; then cp index.html www/index.html; fi
+          if [ -d css ]; then cp -r css www/; fi
+          if [ -d js ]; then cp -r js www/; fi
+          if [ -d assets ]; then cp -r assets www/; fi
+          if [ -d images ]; then cp -r images www/; fi
+          ls -la www/
       - name: Build APK
         run: |
           npx cap add android || true
@@ -27,3 +39,4 @@ jobs:
         with:
           name: MSAARK-FOOTBALL-APK
           path: android/app/build/outputs/apk/debug/app-debug.apk
+          
