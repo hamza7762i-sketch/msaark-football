@@ -1,7 +1,5 @@
 name: Build APK
-
 on: [push]
-
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -9,29 +7,23 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: '20'
       - uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
-          java-version: '17'
-      - name: Install Capacitor
-        run: npm install @capacitor/core @capacitor/cli @capacitor/android
+          java-version: '21'
       - name: Prepare Web App
         run: |
-          if [ ! -f capacitor.config.json ]; then
-            echo '{"appId":"com.msaark.football","appName":"MSAARK Football","webDir":"www"}' > capacitor.config.json
-          fi
           mkdir -p www
-          if [ -f index.html ]; then cp index.html www/index.html; fi
-          if [ -d css ]; then cp -r css www/; fi
-          if [ -d js ]; then cp -r js www/; fi
-          if [ -d assets ]; then cp -r assets www/; fi
-          if [ -d images ]; then cp -r images www/; fi
+          cp index.html www/index.html || echo "no index"
           ls -la www/
       - name: Build APK
         run: |
+          npm init -y
+          npm install @capacitor/core @capacitor/cli @capacitor/android
+          npx cap init "MSAARK Football" com.msaark.football --web-dir=www || true
           npx cap add android || true
-          npx cap sync
+          npx cap sync android
           cd android
           chmod +x gradlew
           ./gradlew assembleDebug
@@ -39,4 +31,3 @@ jobs:
         with:
           name: MSAARK-FOOTBALL-APK
           path: android/app/build/outputs/apk/debug/app-debug.apk
-          
