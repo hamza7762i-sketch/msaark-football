@@ -20,7 +20,7 @@ jobs:
       - name: Build APK
         run: |
           npm init -y
-          npm install @capacitor/core @capacitor/cli @capacitor/android
+          npm install @capacitor/core@7.4.0 @capacitor/cli@7.4.0 @capacitor/android@7.4.0
           npx cap init "MSAARK Football" com.msaark.football --web-dir=www || true
           npx cap add android || true
           npx cap sync android
